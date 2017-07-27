@@ -1,5 +1,6 @@
 function setupprofile () {
     if(Test-Path $HOME\Documents\WindowsPowerShell\){
+        Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
         Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
     }else{
         mkdir $HOME\Documents\WindowsPowerShell\
