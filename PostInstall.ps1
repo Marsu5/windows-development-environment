@@ -9,6 +9,9 @@ function setupprofile () {
 
 Write-Output "Seting up powershell profile."
 setupprofile
-Copy-Item .\PostInstall.ps1 $env:temp\postinstall.ps1
+Write-Output "Installing global npm packages"
+npm install --global --production windows-build-tools
+npm install -g npm-windows-upgrade
+npm install -g hpm-cli
 Write-Output "Installation complete. Press any key to quit ..."
 $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")

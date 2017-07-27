@@ -10,7 +10,6 @@ cinst -y hyper
 
 ## Node, npm
 cinst -y nodejs.install
-npm install -g npm-windows-upgrade
 
 ## Git
 cinst -y git.install -params "/GitAndUnixToolsOnPath /NoShellIntegration"
@@ -28,7 +27,6 @@ cinst -y golang
 
 cinst -y python
 cinst -y pip
-cinst -y python2
 
 if (Test-PendingReboot) { Invoke-Reboot }
 
