@@ -13,7 +13,7 @@ cinst -y nodejs.install
 npm install -g npm-windows-upgrade
 
 ## Git
-cinst -y git.install -params "/GitAndUnixToolsOnPath /WindowsTerminal /NoShellIntegration"
+cinst -y git.install -params "/GitAndUnixToolsOnPath /NoShellIntegration"
 cinst -y poshgit 
 
 ## Editors
@@ -28,15 +28,14 @@ cinst -y golang
 
 cinst -y python
 cinst -y pip
+cinst -y python2
 
 if (Test-PendingReboot) { Invoke-Reboot }
 
 ## Basics
 cinst -y sysinternals
 cinst -y DotNet3.5
-# cinst -y DotNet4.0 -- not needed on windows 8
-# cinst -y DotNet4.5 -- not needed on windows 10
-# cinst -y PowerShell -- not needed on windows 10
+cinst -y googlechrome
 if (Test-PendingReboot) { Invoke-Reboot }
 
 # Pinning Things
@@ -46,4 +45,4 @@ Install-ChocolateyPinnedTaskBarItem "$env:programfiles\Google\Chrome\Application
 Install-WindowsUpdate -acceptEula
 
 # Run post install script
-Invoke-Expression $HOME\AppData\Local\Temp\postinstall.ps1
+Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/PostInstall.ps1" | iex
