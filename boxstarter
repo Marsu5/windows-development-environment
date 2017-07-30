@@ -3,13 +3,12 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 
 Update-ExecutionPolicy Unrestricted
 
-cinst -y Microsoft-Hyper-V-All -source windowsFeatures
-
 # Packages
 cinst -y hyper
 
 ## Node, npm
 cinst -y nodejs.install
+cinst -y yarn
 
 ## Git
 cinst -y git.install -params "/GitAndUnixToolsOnPath /NoShellIntegration"
