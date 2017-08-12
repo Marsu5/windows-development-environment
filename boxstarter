@@ -41,5 +41,12 @@ Install-ChocolateyPinnedTaskBarItem "$env:programfiles\Google\Chrome\Application
 # Let's get Updates, too
 Install-WindowsUpdate -acceptEula
 
-# Run post install script
-Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/PostInstall.ps1" | iex
+# Setup PowerShell profile
+if(Test-Path $HOME\Documents\WindowsPowerShell\){
+    Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
+    Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
+}else{
+    mkdir $HOME\Documents\WindowsPowerShell\
+    Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
+    Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
+}
