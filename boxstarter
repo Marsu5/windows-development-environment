@@ -9,6 +9,11 @@ cinst -y hyper
 ## Node, npm
 cinst -y nodejs.install
 cinst -y yarn
+refreshenv
+
+npm install --global --production windows-build-tools
+npm install -g npm-windows-upgrade
+npm install -g hpm-cli
 
 ## Git
 cinst -y git.install -params "/GitAndUnixToolsOnPath /NoShellIntegration"
@@ -35,18 +40,15 @@ cinst -y DotNet3.5
 cinst -y googlechrome
 if (Test-PendingReboot) { Invoke-Reboot }
 
-# Pinning Things
-Install-ChocolateyPinnedTaskBarItem "$env:programfiles\Google\Chrome\Application\chrome.exe"
-
 # Let's get Updates, too
 Install-WindowsUpdate -acceptEula
 
 # Setup PowerShell profile
 if(Test-Path $HOME\Documents\WindowsPowerShell\){
-    Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
+    Invoke-WebRequest "https://raw.githubusercontent.com/mrclsu/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
     Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
 }else{
     mkdir $HOME\Documents\WindowsPowerShell\
-    Invoke-WebRequest "https://raw.githubusercontent.com/Marsu5/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
+    Invoke-WebRequest "https://raw.githubusercontent.com/mrclsu/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
     Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
 }
