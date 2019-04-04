@@ -3,13 +3,21 @@ Set-WindowsExplorerOptions -EnableShowHiddenFilesFoldersDrives -EnableShowProtec
 
 Update-ExecutionPolicy Unrestricted
 
-# Packages
+# Enable Windows Features
+cinst -y Microsoft-Hyper-V-All -source windowsFeatures
+cinst -y Microsoft-Windows-Subsystem-Linux -source windowsFeatures
+
+# Terminal
+cinst -y powershell-core
 cinst -y hyper
+cinst -y fluent-terminal
 
 ## Node, npm
 cinst -y nodejs.install
 cinst -y yarn
 refreshenv
+
+$env:Path = [System.Environment]::GetEnvironmentVariable("Path","Machine") + ";" + [System.Environment]::GetEnvironmentVariable("Path","User")
 
 npm install --global --production windows-build-tools
 npm install -g npm-windows-upgrade
@@ -26,29 +34,40 @@ cinst -y visualstudiocode
 cinst -y visualstudio2017community
 if (Test-PendingReboot) { Invoke-Reboot }
 
-## Go, Python
+## Go, Python, Java, Dart
 cinst -y golang
 
 cinst -y python
 cinst -y pip
 
+cinst -y adoptopenjdk
+cinst -y gradle
+
+cinst -y dart-sdk
+
 if (Test-PendingReboot) { Invoke-Reboot }
 
-## Basics
+## Utils
 cinst -y sysinternals
 cinst -y DotNet3.5
-cinst -y googlechrome
+cinst -y ffmpeg
+cinst -y 7zip.install
+Add-WindowsCapability -Online -Name OpenSSH.Client
 if (Test-PendingReboot) { Invoke-Reboot }
 
 # Let's get Updates, too
 Install-WindowsUpdate -acceptEula
 
 # Setup PowerShell profile
-if(Test-Path $HOME\Documents\WindowsPowerShell\){
-    Invoke-WebRequest "https://raw.githubusercontent.com/mrclsu/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
-    Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
-}else{
-    mkdir $HOME\Documents\WindowsPowerShell\
-    Invoke-WebRequest "https://raw.githubusercontent.com/mrclsu/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
-    Copy-Item .\Microsoft.PowerShell-profile.ps1 $HOME\Documents\WindowsPowerShell\profile.ps1
+Install-Module Get-ChildItemColor -Confirm
+Install-Module oh-my-posh -Confirm
+Install-Module posh-git -Confirm
+
+if(!Test-Path (Get-Item $profile).Directory){
+    mkdir (Get-Item $profile).Directory
+    mkdir (Join-Path (Get-Item $profile).Directory "PoshThemes")
 }
+Invoke-WebRequest "https://raw.githubusercontent.com/mrclsu/windows-development-environment/master/Microsoft.PowerShell-profile.ps1" -OutFile "Microsoft.PowerShell-profile.ps1"
+Invoke-WebRequest "https://raw.githubusercontent.com/mrclsu/windows-development-environment/master/Mrclsu.psm1" -OutFile "Mrclsu.psm1"
+Move-Item .\Microsoft.PowerShell-profile.ps1 (Get-Item $profile).Directory
+Move-Item .\Mrclsu.psm1 (Join-Path (Get-Item $profile).Directory "PoshThemes")

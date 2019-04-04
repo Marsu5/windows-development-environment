@@ -1,6 +1,17 @@
+Import-Module posh-git
+Import-Module oh-my-posh
 
-# Load posh-git example profile
-#. 'C:\Users\felixr\Documents\WindowsPowerShell\Modules\posh-git\profile.example.ps1'
+# Set custom theme
+$ThemeSettings.MyThemesLocation = Join-Path (Get-Item $profile).Directory "PoshThemes"
+Set-Theme Mrclsu
+
+# Ensure that Get-ChildItemColor is loaded
+Import-Module Get-ChildItemColor
+
+# Set l,ll and ls alias to use the new Get-ChildItemColor cmdlets
+Set-Alias l Get-ChildItemColor -Option AllScope
+Set-Alias ll Get-ChildItemColor -Option AllScope
+Set-Alias ls Get-ChildItemColorFormatWide -Option AllScope
 
 # Increase history
 $MaximumHistoryCount = 10000
@@ -45,6 +56,10 @@ function sed($file, $find, $replace){
 	(Get-Content $file).replace("$find", $replace) | Set-Content $file
 }
 
+function find($inp) {
+	Get-ChildItem -Path $(Get-Location) -Filter $inp -Recurse -Force
+}
+
 function sed-recursive($filePattern, $find, $replace) {
 	$files = ls . "$filePattern" -rec
 	foreach ($file in $files) {
@@ -75,25 +90,31 @@ function export($name, $value) {
 }
 
 function pkill($name) {
-	ps $name -ErrorAction SilentlyContinue | kill
+	Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
+}
+
+function killall($name) {
+	Get-Process $name -ErrorAction SilentlyContinue | Stop-Process
 }
 
 function pgrep($name) {
-	ps $name
+	Get-Process $name
 }
 
 function touch($file) {
-	"" | Out-File $file -Encoding ASCII
+	"" | Out-File $file
 }
 
 # From https://github.com/keithbloom/powershell-profile/blob/master/Microsoft.PowerShell_profile.ps1
 function sudo {
-	$file, [string]$arguments = $args;
-	$psi = new-object System.Diagnostics.ProcessStartInfo $file;
-	$psi.Arguments = $arguments;
-	$psi.Verb = "runas";
-	$psi.WorkingDirectory = get-location;
-	[System.Diagnostics.Process]::Start($psi) >> $null
+	if ($args.Length -ne 0){
+		$file, [string]$arguments = $args;
+		$psi = new-object System.Diagnostics.ProcessStartInfo $file;
+		$psi.Arguments = $arguments;
+		$psi.Verb = "runas";
+		$psi.WorkingDirectory = get-location;
+		[System.Diagnostics.Process]::Start($psi) >> $null
+	} 
 }
 
 # https://gist.github.com/aroben/5542538
@@ -146,7 +167,13 @@ function pstree {
 
 function unzip ($file) {
     $dirname = (Get-Item $file).Basename
-    echo("Extracting", $file, "to", $dirname)
+    Write-Output("Extracting", $file, "to", $dirname)
     New-Item -Force -ItemType directory -Path $dirname
     expand-archive $file -OutputPath $dirname -ShowProgress
+}
+
+# Chocolatey profile
+$ChocolateyProfile = "$env:ChocolateyInstall\helpers\chocolateyProfile.psm1"
+if (Test-Path($ChocolateyProfile)) {
+  Import-Module "$ChocolateyProfile"
 }
